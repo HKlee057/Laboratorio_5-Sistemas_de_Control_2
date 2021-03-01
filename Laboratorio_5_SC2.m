@@ -6,55 +6,41 @@
 % Sistemas de Control 2
 %% Procedimiento
 %% Primera Parte
-%% Inciso 1
-syms s M1 M2 k ks fv fs F
-%{
+%% Inciso 2
+syms M1_sym M2_sym k_sym ks_sym fv_sym fs_sym 
+% Matrices del Sistema
+A_sym = [0 0 1 0;
+    0 0 0 1; 
+    ((-k_sym - ks_sym) / M1_sym) (ks_sym / M1_sym) ...
+    ((-fs_sym - fv_sym) / M1_sym) (fs_sym / M1_sym); 
+    (ks_sym / M2_sym) (-ks_sym / M2_sym) (fs_sym / M2_sym) ...
+    (-fs_sym / M2_sym)];
+
+B_sym = [0; 0; 1/M1_sym; 0];
+
+C1 = [1 0 0 0;
+    0 1 0 0];
+
+D1 = [0; 0];
+
+%% Inciso 3
 M1 = 320;
 M2 = 2500;
 k = 500000;
 ks = 80000;
 fv = 15020;
 fs = 350;
-F = 500000;
-%}
+F = 500e3;
 
-numG1 = 1;
-numG2 = ks + (fs*s);
-numG3 = numG2;
+A = subs(A_sym, [M1_sym, M2_sym, k_sym, ks_sym, fv_sym, fs_sym], ...
+    [M1, M2, k, ks, fv, fs]);
+A = double(A);
+B = subs(B_sym, [M1_sym, M2_sym, k_sym, ks_sym, fv_sym, fs_sym], ...
+    [M1, M2, k, ks, fv, fs]);
+B = double(B);
+%% Inciso 4 
+C2 = eye(4);
+D2 = [0; 0; 0; 0];
 
-denG1 = (k + ks) + ((fv + fs)*s) + (M1*(s^2));
-denG2 = ks + (fs*s) + (M2*(s^2));
-denG3 = denG1;
-
-G1 = numG1 / denG1;
-G2 = numG2 / denG2;
-G3 = numG3 / denG3;
-
-G_OG = (G1 * G2) / (1 - (G2 * G3));
-G_fin = simplify(G_OG);
-
-% ED_sis = ilaplace(G_fin);
-load ED.mat ED_sis
-%% Inciso 2
-
-M1_num = 320;
-M2_num = 2500;
-k_num = 500000;
-ks_num = 80000;
-fv_num = 15020;
-fs_num = 350;
-F_num = 500000;
-
-G_num = subs (G_OG, [M1, M2, k, ks, fv, fs, F], ...
-    [M1_num, M2_num, k_num, ks_num, fv_num, fs_num, F_num]);
-
-% Obtenemos el numerador y denominador
-[N, D] = numden(simplifyFraction(G_num));
-% Obtenemos los coeficientes del numerador y denominador
-b = fliplr(double(coeffs(N)));
-a = fliplr(double(coeffs(D)));
-% Normalizamos
-b = b / a(1);
-a = a / a(1);
-
-G = tf(b, a);
+%% Inciso 5
+init_con = [0; 1; 0; 0];
