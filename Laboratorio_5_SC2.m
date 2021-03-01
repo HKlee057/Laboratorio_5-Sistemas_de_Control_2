@@ -5,6 +5,8 @@
 % Sección 11 
 % Sistemas de Control 2
 %% Procedimiento
+%% Primera Parte
+%% Inciso 1
 syms s M1 M2 k ks fv fs F
 %{
 M1 = 320;
@@ -33,10 +35,21 @@ G_fin = simplify(G_OG);
 
 % ED_sis = ilaplace(G_fin);
 load ED.mat ED_sis
+%% Inciso 2
 
-%{
+M1_num = 320;
+M2_num = 2500;
+k_num = 500000;
+ks_num = 80000;
+fv_num = 15020;
+fs_num = 350;
+F_num = 500000;
+
+G_num = subs (G_OG, [M1, M2, k, ks, fv, fs, F], ...
+    [M1_num, M2_num, k_num, ks_num, fv_num, fs_num, F_num]);
+
 % Obtenemos el numerador y denominador
-[N, D] = numden(simplifyFraction(G_fin));
+[N, D] = numden(simplifyFraction(G_num));
 % Obtenemos los coeficientes del numerador y denominador
 b = fliplr(double(coeffs(N)));
 a = fliplr(double(coeffs(D)));
@@ -45,4 +58,3 @@ b = b / a(1);
 a = a / a(1);
 
 G = tf(b, a);
-%}
