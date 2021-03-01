@@ -44,3 +44,14 @@ D2 = [0; 0; 0; 0];
 
 %% Inciso 5
 init_con = [0; 1; 0; 0];
+
+%% Parte 3
+ks_new = 50;
+fs_new = 20000;
+
+A_p3 = subs(A_sym, [M1_sym, M2_sym, k_sym, ks_sym, fv_sym, fs_sym], ...
+    [M1, M2, k, ks_new, fv, fs_new]);
+A_p3 = double(A_p3);
+B_p3 = subs(B_sym, [M1_sym, M2_sym, k_sym, ks_sym, fv_sym, fs_sym], ...
+    [M1, M2, k, ks_new, fv, fs_new]);
+B_p3 = double(B_p3);
